@@ -1,5 +1,6 @@
 services:
   traefik:
+    image: traefik:v2.11.25-windowsservercore-1809
     volumes:
       - ./data/traefik:C:/etc/traefik
     depends_on:

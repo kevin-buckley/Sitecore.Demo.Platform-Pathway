@@ -21,6 +21,43 @@ Param (
 
 $dockerComposeBaseCommand = "docker compose"
 
+function Invoke-DockerComposeBuild {
+  param (
+    [Parameter(Mandatory = $true)]
+    [string]$Command
+  )
+
+  $previousComposeBake = $env:COMPOSE_BAKE
+  $previousDockerBuildkit = $env:DOCKER_BUILDKIT
+
+  try {
+    # Windows Sitecore image builds fail under BuildKit/Bake on current Docker Desktop releases.
+    $env:COMPOSE_BAKE = "false"
+    $env:DOCKER_BUILDKIT = "0"
+
+    Write-Host "Executing $Command"
+
+    & ([scriptblock]::create($Command))
+
+    $LASTEXITCODE -ne 0 | Where-Object { $_ } | ForEach-Object { throw "Failed." }
+  }
+  finally {
+    if ($null -eq $previousComposeBake) {
+      Remove-Item Env:COMPOSE_BAKE -ErrorAction SilentlyContinue
+    }
+    else {
+      $env:COMPOSE_BAKE = $previousComposeBake
+    }
+
+    if ($null -eq $previousDockerBuildkit) {
+      Remove-Item Env:DOCKER_BUILDKIT -ErrorAction SilentlyContinue
+    }
+    else {
+      $env:DOCKER_BUILDKIT = $previousDockerBuildkit
+    }
+  }
+}
+
 function Invoke-BuildSolutionAssets {
   # Build the solution images
 
@@ -30,11 +67,7 @@ function Invoke-BuildSolutionAssets {
   if ($Parallel) {
     $dockerComposeCommand += " --parallel"
   }
-  Write-Host "Executing $dockerComposeCommand"
-
-  & ([scriptblock]::create($dockerComposeCommand))
-
-  $LASTEXITCODE -ne 0 | Where-Object { $_ } | ForEach-Object { throw "Failed." }
+  Invoke-DockerComposeBuild -Command $dockerComposeCommand
 
   $dockerComposeCommand = $dockerComposeBaseCommand
   $dockerComposeCommand += " --env-file .env"
@@ -43,11 +76,7 @@ function Invoke-BuildSolutionAssets {
   if ($Parallel) {
     $dockerComposeCommand += " --parallel"
   }
-  Write-Host "Executing $dockerComposeCommand"
-
-  & ([scriptblock]::create($dockerComposeCommand))
-
-  $LASTEXITCODE -ne 0 | Where-Object { $_ } | ForEach-Object { throw "Failed." }
+  Invoke-DockerComposeBuild -Command $dockerComposeCommand
 }
 
 if (-not $SkipPull) {
@@ -78,6 +107,4 @@ if ($Parallel) {
 
 $dockerComposeCommand += " $Services"
 
-Write-Host "Executing $dockerComposeCommand"
-
-& ([scriptblock]::create($dockerComposeCommand))
+Invoke-DockerComposeBuild -Command $dockerComposeCommand

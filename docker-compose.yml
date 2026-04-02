@@ -5,20 +5,23 @@ services:
     command:
       - "--ping"
       - "--api.insecure=true"
-      - "--providers.docker.endpoint=npipe:////./pipe/docker_engine"
+      - "--providers.docker.endpoint=tcp://host.docker.internal:2375"
       - "--providers.docker.exposedByDefault=false"
+      - "--providers.docker.network=nat"
       - "--providers.file.directory=C:/etc/traefik/config/dynamic"
+      - "--providers.file.watch=false"
+      - "--entryPoints.web.address=:80"
+      - "--entryPoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entryPoints.web.http.redirections.entryPoint.scheme=https"
       - "--entryPoints.websecure.address=:443"
       - "--entryPoints.websecure.forwardedHeaders.insecure"
     ports:
+      - "80:80"
       - "443:443"
       - "8079:8080"
     healthcheck:
       test: ["CMD", "traefik", "healthcheck", "--ping"]
     volumes:
-      - source: \\.\pipe\docker_engine\
-        target: \\.\pipe\docker_engine\
-        type: npipe
       - ./traefik:C:/etc/traefik
     depends_on:
       id:

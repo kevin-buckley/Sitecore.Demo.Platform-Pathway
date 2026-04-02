@@ -8,7 +8,6 @@ ARG SXA_ASSETS
 ARG HEADLESS_ASSETS
 
 ARG CMP_ASSETS
-ARG XGEN_ASSETS
 
 ARG MANAGEMENT_SERVICES_IMAGE
 #ARG DELTA_ASSET_IMAGE
@@ -26,7 +25,6 @@ FROM ${EXPERIENCE_EDGE_ASSETS_IMAGE} AS edge_assets
 FROM ${GP_IMAGE} AS gp
 
 FROM ${CMP_ASSETS} as cmp_assets
-FROM ${XGEN_ASSETS} as xgen_assets
 
 FROM ${SOLUTION_IMAGE} as solution
 
@@ -66,7 +64,6 @@ RUN C:\module\tools\Initialize-Content.ps1 -TargetPath C:\inetpub\wwwroot; `
     Remove-Item -Path C:\module -Recurse -Force;
 
 COPY --from=cmp_assets /module/cm/content /inetpub/wwwroot
-COPY --from=xgen_assets /module/cm/content /inetpub/wwwroot
 
 # https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/icacls
 # (OI) = directories object inherit, (CI) = directories container inherit, F = Full access

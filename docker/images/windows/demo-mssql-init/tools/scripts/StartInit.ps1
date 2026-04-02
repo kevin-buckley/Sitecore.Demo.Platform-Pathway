@@ -62,9 +62,6 @@ if ($deployDatabases) {
         .\SetSitecoreAdminPassword.ps1 -ResourcesDirectory $ResourcesDirectory -SitecoreAdminPassword $SitecoreAdminPassword -SqlServer $SqlServer -SqlAdminUser $SqlAdminUser -SqlAdminPassword $SqlAdminPassword  -SqlDatabasePrefix:$SqlDatabasePrefix
     }
 
-    Write-Host "Installing XGEN assets"
-    .\DeployDatabases.ps1 -ResourcesDirectory C:\xgen_assets -SqlServer:$SqlServer -SqlAdminUser:$SqlAdminUser -SqlAdminPassword:$SqlAdminPassword -EnableContainedDatabaseAuth -SkipStartingServer -SqlElasticPoolName $SqlElasticPoolName -DatabasesToDeploy $DatabasesToDeploy -SqlDatabasePrefix:$SqlDatabasePrefix -SqlCustomDatabasePrefixUpdateFrom:$SqlCustomDatabasePrefixUpdateFrom
-
     Write-Host "Installing Solution"
     .\DeployDatabases.ps1 -ResourcesDirectory C:\solution_data\security -SqlServer:$SqlServer -SqlAdminUser:$SqlAdminUser -SqlAdminPassword:$SqlAdminPassword -EnableContainedDatabaseAuth -SkipStartingServer -SqlElasticPoolName $SqlElasticPoolName -DatabasesToDeploy $DatabasesToDeploy -SqlDatabasePrefix:$SqlDatabasePrefix -SqlCustomDatabasePrefixUpdateFrom:$SqlCustomDatabasePrefixUpdateFrom
 }
