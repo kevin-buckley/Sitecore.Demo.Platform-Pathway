@@ -84,8 +84,9 @@ try {
     }
     # END CUSTOMIZATION
 
-    # DEMO TEAM CUSTOMIZATION - Custom hostname
-    dotnet sitecore login --cm https://cm.lighthouse.localhost/ --auth https://id.lighthouse.localhost/ --allow-write true
+    # DEMO TEAM CUSTOMIZATION - Custom hostname, use client credentials to avoid interactive browser login
+    $idServerDemoClientSecret = (Get-Content .env -Encoding UTF8 | Where-Object { $_ -imatch "^ID_SERVER_DEMO_CLIENT_SECRET=.+" }) -replace "^ID_SERVER_DEMO_CLIENT_SECRET=", ""
+    dotnet sitecore login --cm https://cm.lighthouse.localhost/ --auth https://id.lighthouse.localhost/ --allow-write true --client-credentials true --client-id "Demo_Automation" --client-secret $idServerDemoClientSecret
     if ($LASTEXITCODE -ne 0) {
         Write-Error "Unable to log into Sitecore, did the Sitecore environment start correctly? See logs above."
     }
