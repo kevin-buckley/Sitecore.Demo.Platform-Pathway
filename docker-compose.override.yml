@@ -17,7 +17,9 @@ services:
         source: .\data\mssql-data
         target: c:\data
     networks:
-      - demo
+      demo:
+        aliases:
+          - ${SQL_SERVER}
 
   # Custom mssql init
   mssql-init:
@@ -155,11 +157,11 @@ services:
       SITECORE_APPSETTINGS_SXAXM:DEFINE: sxaxconnect
       SITECORE_APPSETTINGS_ENV:DEFINE: Docker
       SOLR_CORE_PREFIX_NAME: ${SOLR_CORE_PREFIX_NAME}
-      Sitecore_ConnectionStrings_Security: Data Source=mssql;Initial Catalog=Sitecore.Core;User ID=sa;Password=${SQL_SA_PASSWORD}
-      Sitecore_ConnectionStrings_Web: Data Source=mssql;Initial Catalog=Sitecore.Web;User ID=sa;Password=${SQL_SA_PASSWORD}
-      Sitecore_ConnectionStrings_Messaging: Data Source=mssql;Initial Catalog=Sitecore.Messaging;User ID=sa;Password=${SQL_SA_PASSWORD}
-      Sitecore_ConnectionStrings_ExperienceForms: Data Source=mssql;Initial Catalog=Sitecore.ExperienceForms;User ID=sa;Password=${SQL_SA_PASSWORD}
-      Sitecore_ConnectionStrings_Exm.Master: Data Source=mssql;Initial Catalog=Sitecore.Exm.master;User ID=sa;Password=${SQL_SA_PASSWORD}
+      Sitecore_ConnectionStrings_Security: Data Source=${SQL_SERVER};Initial Catalog=Sitecore.Core;User ID=sa;Password=${SQL_SA_PASSWORD}
+      Sitecore_ConnectionStrings_Web: Data Source=${SQL_SERVER};Initial Catalog=Sitecore.Web;User ID=sa;Password=${SQL_SA_PASSWORD}
+      Sitecore_ConnectionStrings_Messaging: Data Source=${SQL_SERVER};Initial Catalog=Sitecore.Messaging;User ID=sa;Password=${SQL_SA_PASSWORD}
+      Sitecore_ConnectionStrings_ExperienceForms: Data Source=${SQL_SERVER};Initial Catalog=Sitecore.ExperienceForms;User ID=sa;Password=${SQL_SA_PASSWORD}
+      Sitecore_ConnectionStrings_Exm.Master: Data Source=${SQL_SERVER};Initial Catalog=Sitecore.Exm.master;User ID=sa;Password=${SQL_SA_PASSWORD}
       Sitecore_ConnectionStrings_Solr.Search: http://solr:8983/solr
       Sitecore_ConnectionStrings_XConnect.Collection: http://xconnect
       Sitecore_ConnectionStrings_Xdb.MarketingAutomation.Operations.Client: http://xconnect
@@ -218,7 +220,7 @@ services:
       HOST_ID: "http://id"
       MARKETING_DEFINITIONS_APIKEY: ${MARKETING_DEFINITIONS_APIKEY}
       SKIP_WARMUP_CD: ${SKIP_WARMUP_CD}
-      INIT_CONTEXT: Data Source=mssql;Initial Catalog=platform_init_ready;User ID=sa;Password=${SQL_SA_PASSWORD};TrustServerCertificate=Yes;
+      INIT_CONTEXT: Data Source=${SQL_SERVER};Initial Catalog=platform_init_ready;User ID=sa;Password=${SQL_SA_PASSWORD};TrustServerCertificate=Yes;
       ID_SERVER_DEMO_CLIENT_SECRET: ${ID_SERVER_DEMO_CLIENT_SECRET}
     depends_on:
       mssql-init:
